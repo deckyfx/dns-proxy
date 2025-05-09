@@ -1,7 +1,11 @@
 // src/routes/cache.ts
 import type { BunRequest } from "bun";
-
-import { setCacheLiveTime, flushCache } from "../dns-proxy";
+import {
+  setCacheLiveTime,
+  flushCache,
+  getCacheList,
+  deleteCacheEntry,
+} from "../dns-proxy/cache";
 
 export const cacheRoute = {
   POST: {
@@ -16,15 +20,33 @@ export const cacheRoute = {
         );
       }
 
-      setCacheLiveTime(cacheLiveTime); // Update the cache live time
+      setCacheLiveTime(cacheLiveTime);
       return Response.json({ success: true });
     },
 
     "/flushCache": () => {
-      flushCache(); // Clear the cache
+      flushCache();
       return Response.json({
         success: true,
         message: "Cache flushed successfully",
+      });
+    },
+  },
+
+  GET: {
+    "/cacheList": () => {
+      const list = getCacheList();
+      return Response.json({ success: true, data: list });
+    },
+  },
+
+  DELETE: {
+    "/cache/:domain": (req: BunRequest) => {
+      const { domain } = req.params as { domain: string };
+      deleteCacheEntry(domain);
+      return Response.json({
+        success: true,
+        message: `${domain} removed from cache.`,
       });
     },
   },

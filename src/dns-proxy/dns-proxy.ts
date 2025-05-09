@@ -4,12 +4,12 @@ import {
   resolveWithNextDNS,
   resolveWithCloudflare,
   getHostnameFromQuery,
+  extractAnswerIP, // ⬅️ New helper
 } from "./resolver";
-import { cacheResponse, getCachedResponse, isCacheValid } from "./cache";
+import { cacheResponse, getCachedResponse } from "./cache";
 import { NEXTDNS_WHITELIST } from "./whitelist";
 import { server } from "./server";
 
-// NEXTDNS_ID management
 export let NEXTDNS_ID = ""; // initially empty
 
 export function setNextdnsId(id: string) {
@@ -18,41 +18,55 @@ export function setNextdnsId(id: string) {
 
 // Handle DNS query
 export async function handleDnsQuery(msg: Buffer, rinfo: dgram.RemoteInfo) {
-  if (!server) {
-    return;
-  }
+  if (!server) return;
+
   const hostname = getHostnameFromQuery(msg);
   console.log(
     `Received DNS query for: ${hostname} from ${rinfo.address}:${rinfo.port}`
   );
 
   let response: Buffer | null = null;
+  let resolvedBy = ""; // Will track which resolver answered
+  let resolvedIp = ""; // Will track the resolved IP
 
-  // Check cache first
-  if (isCacheValid(hostname)) {
+  // ✅ Check cache first
+  const cachedResponse = getCachedResponse(hostname);
+  if (cachedResponse) {
     console.log(`Serving cached response for ${hostname}`);
-    response = getCachedResponse(hostname); // Serve cached result
+    response = cachedResponse.data;
+    resolvedBy = "Cache";
+    resolvedIp = cachedResponse.resolvedTo; // Use the cached resolved IP
   }
 
   if (!response) {
-    // Resolve DNS from whitelist or fallback to Cloudflare
+    // ✅ Try NextDNS if whitelisted
     if (NEXTDNS_WHITELIST.includes(hostname)) {
       console.log(`Resolving ${hostname} with NextDNS...`);
       response = await resolveWithNextDNS(msg);
+      resolvedBy = "NextDNS";
     }
 
+    // ✅ Else fallback to Cloudflare
     if (!response) {
       console.log(`Resolving ${hostname} with Cloudflare...`);
       response = await resolveWithCloudflare(msg);
+      resolvedBy = "Cloudflare";
     }
 
-    // Cache the resolved response
+    // ✅ Extract resolved IP from response (optional)
     if (response) {
-      console.log(`Caching response for ${hostname}`);
-      cacheResponse(hostname, response);
+      resolvedIp = extractAnswerIP(response) || "unknown";
+      console.log(`Caching response for ${hostname} (${resolvedIp})`);
+
+      // Store the result with the resolved IP in cache immediately
+      cacheResponse(hostname, response, {
+        resolvedTo: resolvedIp,
+        resolvedBy,
+      });
     }
   }
 
+  // ✅ Send back the DNS response
   if (response) {
     server.send(
       response,

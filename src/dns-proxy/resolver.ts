@@ -81,3 +81,47 @@ export function getHostnameFromQuery(
 
   return labels.join(".");
 }
+
+// resolver.ts
+
+// ⬇️ New Helper: Extract Answer IP from DNS response buffer
+export function extractAnswerIP(response: Buffer | undefined): string | null {
+  if (!response) return null; // Return null if response is undefined or empty
+
+  // Skip DNS Header (12 bytes) and Question section
+  let offset = 12;
+
+  // Skip Question Name
+  while (offset < response.length) {
+    const length = response[offset];
+
+    // Ensure that `length` is a valid value (it must be between 0 and 255)
+    if (length === undefined || length === 0) break;
+
+    offset += length + 1;
+  }
+  
+  offset += 5; // Skip null byte, QTYPE, and QCLASS
+
+  // Ensure we're within bounds before accessing the Answer section
+  if (offset + 12 > response.length) return null;
+
+  // Now at Answer section
+  // Read TYPE (2 bytes) — looking for Type A (0x0001)
+  const type = response.readUInt16BE(offset + 2);
+  if (type !== 1) return null; // Only handle IPv4
+
+  // Read Data length
+  const dataLen = response.readUInt16BE(offset + 10);
+  if (dataLen !== 4) return null; // Only handle 4-byte IPv4
+
+  const ipOffset = offset + 12;
+
+  // Ensure we're within bounds before accessing IP data
+  if (ipOffset + 3 >= response.length) return null;
+
+  const ip = `${response[ipOffset]}.${response[ipOffset + 1]}.${
+    response[ipOffset + 2]
+  }.${response[ipOffset + 3]}`;
+  return ip;
+}

@@ -1,11 +1,10 @@
 import path from "node:path";
-
 import { startRoute } from "./routes/start";
 import { stopRoute } from "./routes/stop";
 import { restartRoute } from "./routes/restart";
 import { statusRoute } from "./routes/status";
 import { whitelistRoute } from "./routes/whitelist";
-import { cacheRoute } from "./routes/cache";
+import { cacheRoute } from "./routes/cache"; // Import the cache route
 
 Bun.serve({
   port: 3000,
@@ -17,8 +16,14 @@ Bun.serve({
     "/api/restart": restartRoute,
     "/api/status": statusRoute,
     "/api/whitelist": whitelistRoute,
+
+    // Cache Routes
     "/api/cache/setCacheLiveTime": cacheRoute.POST["/setCacheLiveTime"],
     "/api/cache/flushCache": cacheRoute.POST["/flushCache"],
+
+    // New cache-related routes for list and deletion
+    "/api/cache/cacheList": cacheRoute.GET["/cacheList"], // Get list of cached entries
+    "/api/cache/:domain": cacheRoute.DELETE["/cache/:domain"], // Delete specific cache entry
 
     // Optional: serve your frontend
     "/": {
