@@ -1,83 +1,24 @@
 import path from "node:path";
-import {
-  startProxy,
-  stopProxy,
-  restartProxy,
-  isRunning,
-  getWhitelist,
-  addDomainToWhitelist,
-  removeDomainFromWhitelist,
-} from "./dns-proxy";
+
+import { startRoute } from "./routes/start";
+import { stopRoute } from "./routes/stop";
+import { restartRoute } from "./routes/restart";
+import { statusRoute } from "./routes/status";
+import { whitelistRoute } from "./routes/whitelist";
+import { cacheRoute } from "./routes/cache";
 
 Bun.serve({
   port: 3000,
   development: true,
 
   routes: {
-    "/api/start": {
-      POST: () => {
-        startProxy();
-        return Response.json({ status: "started" });
-      },
-    },
-
-    "/api/stop": {
-      POST: () => {
-        stopProxy();
-        return Response.json({ status: "stopped" });
-      },
-    },
-
-    "/api/restart": {
-      POST: () => {
-        restartProxy();
-        return Response.json({ status: "restarted" });
-      },
-    },
-
-    "/api/status": {
-      GET: () => {
-        return Response.json({ running: isRunning() });
-      },
-    },
-
-    "/api/whitelist": {
-      GET: () => {
-        return Response.json({ success: true, data: getWhitelist() });
-      },
-      POST: async (req) => {
-        const body = await req.json();
-        const domain = body.domain;
-        if (typeof domain !== "string" || !domain) {
-          return Response.json(
-            { success: false, message: "Invalid domain" },
-            { status: 400 }
-          );
-        }
-
-        const added = addDomainToWhitelist(domain);
-        return Response.json({
-          success: added,
-          message: added ? "Domain added" : "Already exists",
-        });
-      },
-      DELETE: async (req) => {
-        const body = await req.json();
-        const domain = body.domain;
-        if (typeof domain !== "string" || !domain) {
-          return Response.json(
-            { success: false, message: "Invalid domain" },
-            { status: 400 }
-          );
-        }
-
-        const removed = removeDomainFromWhitelist(domain);
-        return Response.json({
-          success: removed,
-          message: removed ? "Domain removed" : "Not found",
-        });
-      },
-    },
+    "/api/start": startRoute,
+    "/api/stop": stopRoute,
+    "/api/restart": restartRoute,
+    "/api/status": statusRoute,
+    "/api/whitelist": whitelistRoute,
+    "/api/cache/setCacheLiveTime": cacheRoute.POST["/setCacheLiveTime"],
+    "/api/cache/flushCache": cacheRoute.POST["/flushCache"],
 
     // Optional: serve your frontend
     "/": {
