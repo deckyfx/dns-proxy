@@ -1,35 +1,86 @@
-# dns-proxy
+# 🛡️ DNS Proxy with Whitelist + Cache Control
 
-To install dependencies:
+# DNS Proxy Server 🌐⚡
+
+[![Built with Bun](https://img.shields.io/badge/Built%20with-Bun-black?logo=bun&logoColor=white)](https://bun.sh/)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Stars Welcome](https://img.shields.io/badge/⭐️-Stars%20Welcome-ff69b4)](https://github.com/yourusername/dns-proxy/stargazers)
+
+A simple but powerful DNS Proxy server that:
+
+- Uses NextDNS or Cloudflare to resolve queries 🔄
+- Supports domain **whitelisting** ✅
+- Uses in-memory **caching** for faster responses ⚡
+- Includes a clean **frontend dashboard** to manage everything 🖥️
+
+![Screenshot](assets/ss01.png)
+
+---
+
+## 🚀 Features
+
+- **DNS over HTTPS** resolver (NextDNS + Cloudflare fallback)
+- **Whitelist control**: Allow specific domains to resolve via NextDNS
+- **Cache system**: Boosts performance and reduces external lookups
+- **API & Web UI**: Easily manage whitelist, cache, and server status
+- Built with **Bun.js** (ultra-fast runtime)
+
+---
+
+## 📦 Installation & Setup
+
+### 1. Clone the Repo
+
+```bash
+git clone https://github.com/yourusername/dns-proxy.git
+cd dns-proxy
+```
+
+### 2. Running the server
+
+Make sure you have Bun installed (v1.2.3+).
 
 ```bash
 bun install
+bun run build
+bun run start
 ```
 
-To run:
+The API server will start at:
+http://localhost:3000
 
-```bash
-bun run index.ts
-```
+## 🌐 Usage Guide
 
-This project was created using `bun init` in bun v1.2.5. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+### ✅ Whitelist Control (Domain Filtering)
 
-1. Build the image
+- Open your browser and go to: [http://localhost:3000](http://localhost:3000)
+- Use the **"DNS Whitelist"** panel to:
+  - Add domains you want to resolve through **NextDNS** (e.g., `example.com`).
+  - Remove domains you no longer want whitelisted.
 
-```bash
-docker build -t mydns-proxy .
-```
+Whitelisted domains will bypass normal fallback rules and resolve via **NextDNS**.  
+Non-whitelisted domains will resolve via **Cloudflare** by default.
 
-2. Run the container (with DNS + web UI exposed)
+---
 
-```bash
-docker run -p 3000:3000 -p 53:53/udp --cap-add=NET_ADMIN mydns-proxy
-```
+### ⚡ Cache Management
 
-```text
-🔥 --cap-add=NET_ADMIN is sometimes needed for binding to privileged ports like 53 (DNS).
-```
+Boost performance and control DNS query caching!
 
-```bash
-bun run build && sudo env "PATH=$PATH" bun start-server
-```
+- Use the **Cache Control** panel in the UI to:
+  - View current cached entries.
+  - Flush (clear) the cache manually.
+  - Set cache TTL (time-to-live) duration in seconds.
+
+This helps reduce external lookups and speeds up repeated queries.
+
+---
+
+
+## ⚠️ License (Use at Your Own Risk)
+
+This project is licensed under the **MIT License** — meaning:
+
+- ✅ You are free to use, modify, and share it.
+- ❌ However, there is **no warranty**.
+- ⚠️ Use this tool at **your own risk**. I am not responsible for any damage, misuse, or issues caused by this software.
