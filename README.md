@@ -43,11 +43,31 @@ Make sure you have Bun installed (v1.2.3+).
 ```bash
 bun install
 bun run build
-bun run start
+sudo bun run start
 ```
 
 The API server will start at:
 http://localhost:3000
+
+## 3. Note
+
+The server need to run dgram server listening on ort 53, which require admin privileges, hence sudo command is used.
+
+## 📡 Configure Your Device to Use This DNS Proxy
+
+### 1. Find your server's IP address
+
+(e.g., 192.168.1.100)
+
+### 2. On your device (PC, router, smartphone), go to DNS settings and set:
+
+```bash
+Primary DNS: 192.168.1.100
+Secondary DNS: (optional, or leave blank)
+```
+
+Save and restart network connection.
+Now all DNS queries will go through your proxy server!
 
 ## 🌐 Usage Guide
 
@@ -75,7 +95,6 @@ Boost performance and control DNS query caching!
 This helps reduce external lookups and speeds up repeated queries.
 
 ---
-
 
 ## ⚠️ License (Use at Your Own Risk)
 
