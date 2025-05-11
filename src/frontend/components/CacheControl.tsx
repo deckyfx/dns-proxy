@@ -19,6 +19,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 
+import BlockIcon from '@mui/icons-material/Block'; // Import BlockIcon
 interface CacheRecord {
   domain: string;
   resolvedAt: string;
@@ -90,6 +91,15 @@ const CacheControl: React.FC = ({
     alert(`${domain} added to whitelist.`);
   };
 
+  // Function to add a domain to the blacklist
+  const handleBlockDomain = async (domain: string) => {
+    await fetch("/api/blacklist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ domain }),
+    });
+    alert(`${domain} added to blacklist.`);
+  };
   return (
     <Box className="p-4 max-w-md mx-auto mt-10 shadow-2xl rounded-2xl">
       <Typography variant="h5" gutterBottom>
@@ -180,6 +190,13 @@ const CacheControl: React.FC = ({
                           onClick={() => handleWhitelistDomain(rec.domain)}
                         >
                           <PlaylistAddIcon />
+                        </IconButton>
+                        <IconButton
+                          color="secondary" // Use a different color
+                          size="small"
+                          onClick={() => handleBlockDomain(rec.domain)} // Call the new function
+                        >
+                          <BlockIcon /> {/* Use the BlockIcon */}
                         </IconButton>
                       </Stack>
                     </TableCell>

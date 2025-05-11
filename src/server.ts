@@ -7,6 +7,7 @@ import { stopRoute } from "./routes/stop";
 import { restartRoute } from "./routes/restart";
 import { statusRoute } from "./routes/status";
 import { whitelistRoute } from "./routes/whitelist";
+import { blacklistRoute } from "./routes/blacklist"; // Import the blacklist route
 import { cacheRoute } from "./routes/cache"; // Import the cache route
 import { testDomainRoute } from "./routes/test-domain";
 
@@ -21,6 +22,9 @@ Bun.serve({
     "/api/restart": restartRoute,
     "/api/status": statusRoute,
     "/api/whitelist": whitelistRoute,
+
+    // Blacklist Route
+    "/api/blacklist": blacklistRoute,
 
     // Test Route
     "/api/test-domain": { POST: testDomainRoute },
@@ -67,5 +71,6 @@ Bun.serve({
     return new Response("Not Found", { status: 404 });
   },
 });
+
 
 console.log(`Server running at http://localhost:${config.FRONTEND_PORT}`);
