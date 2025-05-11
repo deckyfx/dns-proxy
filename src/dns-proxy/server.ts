@@ -3,7 +3,7 @@
 import * as dgram from "dgram";
 import { handleDnsQuery } from "./dns-proxy";
 
-const PORT = 53;
+const PORT = Number(process.env.DNS_DGRAM_PORT) || 53;
 
 // Server management
 export let server: dgram.Socket | null = null;

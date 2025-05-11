@@ -6,8 +6,9 @@ import { statusRoute } from "./routes/status";
 import { whitelistRoute } from "./routes/whitelist";
 import { cacheRoute } from "./routes/cache"; // Import the cache route
 
+const frontendPort = Number(process.env.FRONTEND_PORT) || 3000;
 Bun.serve({
-  port: 3000,
+  port: frontendPort,
   development: true,
 
   routes: {
@@ -60,4 +61,4 @@ Bun.serve({
   },
 });
 
-console.log("Server running at http://localhost:3000");
+console.log(`Server running at http://localhost:${frontendPort}`);

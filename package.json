@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "bun run watch-frontend & bun run start-server",
     "watch-frontend": "bun dev src/frontend",
-    "start-server": "bun run src/server.ts",
-    "build": "bun run build.ts"
+    "start-server": "bun --env-file=.env run src/server.ts",
+    "build": "bun run build.ts",
+    "build-run": "bun run build && bun run start-server"
   },
   "devDependencies": {
     "@types/bun": "latest",

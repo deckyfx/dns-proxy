@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 const domainRegex = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)+[a-zA-Z]{2,}$/;
 
@@ -34,6 +35,10 @@ const WhitelistControl: React.FC = () => {
       .catch((error) => console.error("Error fetching whitelist:", error));
     setTimeout(() => setWhitelistUpdated(false), 2000);
   }, [whitelistUpdated]);
+
+  const handleRefreshWhitelist = () => {
+    setWhitelistUpdated(true);
+  };
 
   const handleAddDomain = async () => {
     const domainTrimmed = newDomain.trim().toLowerCase();
@@ -115,12 +120,18 @@ const WhitelistControl: React.FC = () => {
             color="success"
             onClick={handleAddDomain}
             disabled={loading || !newDomain.trim()}
-            sx={{ alignSelf: "center" }}
-          >
+            sx={{ alignSelf: "center" }}>
             <AddCircleIcon />
           </IconButton>
+          <IconButton
+            color="primary" // Changed color for distinction
+            onClick={handleRefreshWhitelist}
+            disabled={loading}
+            sx={{ alignSelf: "center" }}>
+            <RefreshIcon />
+          </IconButton>
         </Box>
-
+        
         <Divider sx={{ mb: 2 }} />
 
         <Typography variant="subtitle1" gutterBottom>
