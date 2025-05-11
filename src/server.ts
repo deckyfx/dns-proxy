@@ -1,14 +1,18 @@
 import path from "node:path";
+
+import { loadConfig } from "./config";
+
 import { startRoute } from "./routes/start";
 import { stopRoute } from "./routes/stop";
 import { restartRoute } from "./routes/restart";
 import { statusRoute } from "./routes/status";
 import { whitelistRoute } from "./routes/whitelist";
 import { cacheRoute } from "./routes/cache"; // Import the cache route
+import { testDomainRoute } from "./routes/test-domain";
 
-const frontendPort = Number(process.env.FRONTEND_PORT) || 3000;
+const config = loadConfig();
 Bun.serve({
-  port: frontendPort,
+  port: config.FRONTEND_PORT,
   development: true,
 
   routes: {
@@ -17,6 +21,9 @@ Bun.serve({
     "/api/restart": restartRoute,
     "/api/status": statusRoute,
     "/api/whitelist": whitelistRoute,
+
+    // Test Route
+    "/api/test-domain": { POST: testDomainRoute },
 
     // Cache Routes
     "/api/cache/setCacheLiveTime": cacheRoute.POST["/setCacheLiveTime"],
@@ -61,4 +68,4 @@ Bun.serve({
   },
 });
 
-console.log(`Server running at http://localhost:${frontendPort}`);
+console.log(`Server running at http://localhost:${config.FRONTEND_PORT}`);

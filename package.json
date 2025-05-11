@@ -7,7 +7,7 @@
     "dev": "bun run watch-frontend & bun run start-server",
     "watch-frontend": "bun dev src/frontend",
     "start-server": "bun --env-file=.env run src/server.ts",
-    "build": "bun run build.ts",
+    "build": "bun run pre-build.ts && bun run build.ts",
     "build-run": "bun run build && bun run start-server"
   },
   "devDependencies": {

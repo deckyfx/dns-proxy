@@ -1,7 +1,8 @@
 import CacheControl from "./components/CacheControl";
+import DevModeTest from "./components/DevModeTest";
 import DnsProxyControl from "./components/DnsProxyControl";
 import WhitelistControl from "./components/WhitelistControl";
-import { Box, Container, Typography, Stack } from "@mui/material";
+import { Container, Typography, Stack } from "@mui/material";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <DnsProxyControl />
         <WhitelistControl />
         <CacheControl />
+        <DevModeTest />
       </Stack>
     </Container>
   );
